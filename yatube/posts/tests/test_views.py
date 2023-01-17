@@ -73,6 +73,7 @@ class PostViewsTest(TestCase):
 
     def test_index_page_show_correct_context(self):
         """Шаблон index сформирован с правильным контекстом."""
+        cache.clear()
         response = self.authorized_client.get(reverse('posts:index'))
         first_object = response.context['page_obj'][0]
         self.two_objects_comparison(first_object)
@@ -318,7 +319,7 @@ class CacheTest(TestCase):
         cls.user = User.objects.create_user(username='NoName')
         cls.post = Post.objects.create(
             author=cls.user,
-            text=(f'Any text'),
+            text='Any text',
         )
 
     def setUp(self):
