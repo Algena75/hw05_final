@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Войти{% endblock %}
+{% block content %}
+  {% with card_header='Войти на сайт' button_type=True button_legend='Войти' login_page=True %}
+    {% include 'users/includes/form.html' %} 
+  {% endwith %}
+{% endblock %}
