@@ -1,25 +1,16 @@
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import cache_page
 
 from .forms import CommentForm, PostForm
 from .models import Follow, Group, Post, User
-
-
-def page_obj_return(request, posts):
-    """Получение page_obj с паджинатором."""
-    paginator = Paginator(posts, settings.POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    return page_obj
+from .utils import page_obj_return
 
 
 @cache_page(20, key_prefix='index_page')
 def index(request):
     template = 'posts/index.html'
-    posts = Post.objects.all()
+    posts = Post.objects.select_related('group', 'author').all()
     context = {
         'page_obj': page_obj_return(request, posts),
     }
@@ -41,12 +32,12 @@ def profile(request, username):
     template = 'posts/profile.html'
     author = get_object_or_404(User, username=username)
     posts = author.posts.all()
-    following = False
-    if request.user.is_authenticated:
-        following = Follow.objects.filter(
+    following = True if (
+        request.user.is_authenticated and Follow.objects.filter(
             user=request.user,
             author=author,
         ).exists()
+    ) else False
     context = {
         'author': author,
         'page_obj': page_obj_return(request, posts),

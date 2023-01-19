@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 
 from .models import Comment, Follow, Group, Post
@@ -14,7 +15,7 @@ class PostAdmin(admin.ModelAdmin):
     list_editable = ('group',)
     search_fields = ('text',)
     list_filter = ('pub_date',)
-    empty_value_display = '-пусто-'
+    empty_value_display = settings.EMPTY_VALUE_DISPLAY
 
 
 class GroupAdmin(admin.ModelAdmin):
@@ -23,7 +24,7 @@ class GroupAdmin(admin.ModelAdmin):
         'slug',
         'description',
     )
-    empty_value_display = '-пусто-'
+    empty_value_display = settings.EMPTY_VALUE_DISPLAY
 
 
 class CommentAdmin(admin.ModelAdmin):

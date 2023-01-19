@@ -131,7 +131,7 @@ class PostViewsTest(TestCase):
         )
         form = response.context['form']
         self.assertIsInstance(form, PostForm)
-        self.assertContains(response, 'Редактировать запись')
+        self.assertContains(response, 'Редактировать пост')
 
     def test_form_at_post_edit_page_contains_data(self):
         """Проверка содержания данных для изменения в форме редактирования

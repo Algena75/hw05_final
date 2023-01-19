@@ -148,6 +148,7 @@ EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 # объявляем константы: ПОСТОВ_НА_СТРАНИЦЕ
 POSTS_PER_PAGE: int = 10
+EMPTY_VALUE_DISPLAY: str = '-пусто-'
 
 # переопределяем view-функцию для обработки ошибки 403
 CSRF_FAILURE_VIEW = 'core.views.csrf_failure'

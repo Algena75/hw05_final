@@ -71,7 +71,7 @@ class PostURLTest(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.OK.value)
 
     def test_edit_post_page_redirects_if_not_author(self):
-        """Страница редактирования пересылает на страницу login не автора."""
+        """Страница редактирования пересылает на страницу поста не автора."""
         response = self.authorized_client.get(
             f'/posts/{self.post.id}/edit/', follow=True)
         self.assertRedirects(response, f'/posts/{self.post.id}/')
@@ -104,8 +104,35 @@ class PostURLTest(TestCase):
             f'/posts/{self.post.id}/': 'posts/post_detail.html',
             f'/posts/{self.post.id}/edit/': 'posts/post_create.html',
             '/create/': 'posts/post_create.html',
+            '/follow/': 'posts/follow.html',
         }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
                 response = self.author_client.get(address)
                 self.assertTemplateUsed(response, template)
+
+    def test_follow_page_exist_at_desired_location(self):
+        """Страница избранных авторов доступна по ожидаемому адресу."""
+        response = self.authorized_client.get('/follow/')
+        self.assertEqual(response.status_code, HTTPStatus.OK.value)
+
+    def test_comments_page_exist_and_redirects(self):
+        """Страница комментирования доступна по ожидаемому адресу."""
+        response = self.authorized_client.get(
+            f'/posts/{self.post.id}/comment/'
+        )
+        self.assertEqual(response.status_code, HTTPStatus.FOUND)
+        self.assertRedirects(response, f'/posts/{self.post.id}/')
+
+    def test_follow_pages_exist_and_redirects(self):
+        """Страницы подписки доступны по ожидаемому
+        адресу и переадресуют на страницу профайла."""
+        pages_address = [
+            f'/profile/{self.user}/follow/',
+            f'/profile/{self.user}/unfollow/',
+        ]
+        for address in pages_address:
+            with self.subTest(address=address):
+                response = self.authorized_client.get(address, follow=True)
+                self.assertEqual(response.status_code, HTTPStatus.OK)
+                self.assertRedirects(response, f'/profile/{self.user}/')
